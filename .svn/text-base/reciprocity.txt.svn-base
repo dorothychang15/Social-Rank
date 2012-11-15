@@ -1,0 +1,20 @@
+command line function:
+recip <inputDir> <outputDir> <#reducers>
+
+AWS arguments:
+edu.upenn.mkse212.hw3.SocialRankDriver recip s3n://<bucketname>/in 
+s3n://<bucketname>/out <#reducers>
+
+inputDir should contain the files of edges
+outputDir will contain one file with one line with one value, the reciprocity of the input graph
+
+How it works:
+First MapReduce round goes through each pair and emits the lower valued vertex as key and the remining as value.
+Thus in the reducer bidirectional links will be captured in the same key. 
+The reducer finds these bidirectional links and writes "TWO-WAY",
+the rest write "ONE-WAY"
+
+Second MapReduce round reads "TWO-WAY" and "ONE-WAY", emitting all to a common key "LINKS"
+The reducer then just iterates over all values, counting # of "TWO-WAYS" and total # of links.
+Divide and get reciprocity.
+Write to file.
